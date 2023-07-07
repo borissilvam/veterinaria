@@ -9,12 +9,13 @@ public class RevisionDiaria {
  
      
     private Integer idRevisionDiaria;
+
+    private String detalle;
     
     private Date fechaRevision;
     
     private Integer idPaciente;
     
-    private String estadoHosRevisiondiaria;
     
 
 }

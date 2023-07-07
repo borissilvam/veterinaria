@@ -23,6 +23,9 @@ public class HosRevisionDiaria
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idRevisionDiaria;
 
+    @Column(name = "detalle")
+    private String detalle;
+
     @Column(name = "fechaRevision")
     private Date fechaRevision;
 

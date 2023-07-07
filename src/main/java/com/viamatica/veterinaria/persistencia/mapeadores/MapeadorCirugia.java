@@ -18,8 +18,7 @@ public interface MapeadorCirugia {
         @Mapping(source = "idPaciente", target = "idPaciente"),
         @Mapping(source = "idHosTipoCirugia", target = "idHosTipoCirugia"),
         @Mapping(source = "fechaProgramada", target = "fechaProgramada"),
-        @Mapping(source = "idDoctor", target = "idDoctor"),
-        @Mapping(source = "estadoCirugia", target = "estadoCirugia")
+        @Mapping(source = "idDoctor", target = "idDoctor")
     })
     Cirugia toCirugia(HosCirugia hosCirugia);
 
@@ -29,7 +28,8 @@ public interface MapeadorCirugia {
     @Mappings({
         @Mapping(target="fechaCreacion", ignore = true),
         @Mapping(target="fechaActualizacion", ignore = true),
-        @Mapping(target="fechaEliminacion", ignore = true)
+        @Mapping(target="fechaEliminacion", ignore = true),
+        @Mapping(target = "estadoCirugia", ignore = true)
     })
     HosCirugia toHosCirugia(Cirugia cirugia);
 

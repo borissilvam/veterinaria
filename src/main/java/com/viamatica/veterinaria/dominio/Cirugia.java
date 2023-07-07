@@ -3,7 +3,6 @@ package com.viamatica.veterinaria.dominio;
 
 import java.util.Date;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
@@ -19,7 +18,6 @@ public class Cirugia  {
 
     private Integer idDoctor;
 
-    private String estadoCirugia;
 
     
 }

@@ -9,5 +9,4 @@ public class TipoCirugia {
 
     private String tipoCirugia;
 
-    private String estadoTipoCirugia;
 }
