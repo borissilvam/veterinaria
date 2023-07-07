@@ -10,7 +10,7 @@ public interface EntidadUsuarioCrudRepositorio extends JpaRepository<EntidadUsua
 
     Optional<EntidadUsuario> findByNombreUsuario(String nombreUsuario);
 
-
+    Optional<EntidadUsuario> findByCorreo(String correo);
 
 
 }

@@ -18,9 +18,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(customizeRequests -> {
                     customizeRequests
-                            .requestMatchers(HttpMethod.GET, "/perfil/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/perfil/**").hasAnyRole("ADMIN", "AUDITOR")
                             .requestMatchers(HttpMethod.POST, "/perfil/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PUT).denyAll()
+                            .requestMatchers(HttpMethod.PUT, "/perfil/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "perfil/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/usuario/**").hasAnyRole("ADMIN", "AUDITOR")
+                            .requestMatchers(HttpMethod.POST, "/usuario/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/usuario/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE,"/usuario/**").hasRole("ADMIN")
                             .anyRequest()
                             .authenticated();
 
@@ -35,3 +40,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

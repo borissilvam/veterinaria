@@ -45,4 +45,8 @@ public class UsuarioService {
     public Optional<Usuario> obtenerUsuarioPorNombre(String nombreUsuario){
         return usuarioRepositorio.obtenerUsuarioPorNombre(nombreUsuario);
     }
+
+    public Optional<Usuario> obtenerUsuarioPorCorreo(String correo){
+        return usuarioRepositorio.obtenerUsuarioPorCorreo(correo);
+    }
 }
