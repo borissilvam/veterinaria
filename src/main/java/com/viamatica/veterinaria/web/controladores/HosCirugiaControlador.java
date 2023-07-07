@@ -1,10 +1,6 @@
 package com.viamatica.veterinaria.web.controladores;
 
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viamatica.veterinaria.dominio.Cirugia;
 import com.viamatica.veterinaria.dominio.servicio.HosCirugiaServicio;
-import com.viamatica.veterinaria.persistencia.crud.HosCirugiaRepositorio;
 
 
 
