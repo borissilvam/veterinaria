@@ -18,103 +18,98 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viamatica.veterinaria.modelo.HosCirugia;
-import com.viamatica.veterinaria.modelo.HosHospitalizacionPaciente;
-import com.viamatica.veterinaria.repositorio.HosHospitalizacionPacienteRepositorio;
+import com.viamatica.veterinaria.dominio.HospitalizacionPaciente;
+import com.viamatica.veterinaria.dominio.servicio.HosHospitalizacionPacienteServicio;
+
 
 @RestController
 @RequestMapping("/HosHospitalizacionPaciente")
 class HosHospitalizacionPacienteControlador {
 
     @Autowired
-    HosHospitalizacionPacienteRepositorio repositorio;
+    HosHospitalizacionPacienteServicio servicio;
+
+    
+    //#region lectura
+    @GetMapping("/id/{id}")
+    public ResponseEntity<HospitalizacionPaciente> obtenerPorId(@PathVariable("id") Integer id)
+    {
+        try{
+            HospitalizacionPaciente HospitalizacionPaciente = servicio.obtenerPorId(id);
+            if (HospitalizacionPaciente == null)
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HospitalizacionPaciente, HttpStatus.OK);
+        }catch(Exception e)
+        {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping
-    public ResponseEntity<List<HosHospitalizacionPaciente>> obtenerTodos() {
-        try {
-            List<HosHospitalizacionPaciente> items = new ArrayList<HosHospitalizacionPaciente>();
-
-            repositorio.findAll().stream().filter( item -> item.getEstadoHosPaciente()!=null &&  item.getEstadoHosPaciente().equals("A")).forEach(items::add);
-
-            if (items.isEmpty())
+    public ResponseEntity<List<HospitalizacionPaciente>> obtenerTodos()
+    {
+        try{
+            List<HospitalizacionPaciente> HospitalizacionPacientes = servicio.obtenerTodos();
+            if(HospitalizacionPacientes.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            return new ResponseEntity<>(items, HttpStatus.OK);
-        } catch (Exception e) {
+            return new ResponseEntity<>(HospitalizacionPacientes, HttpStatus.OK);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/incluidoBorrados")
-    public ResponseEntity<List<HosHospitalizacionPaciente>> obtenerTodosIncluidoBorrados() {
-        try {
-            List<HosHospitalizacionPaciente> items = new ArrayList<HosHospitalizacionPaciente>();
-
-            repositorio.findAll().forEach(items::add);
-
-            if (items.isEmpty())
+    @GetMapping("/incluidoInactivos")
+    public ResponseEntity<List<HospitalizacionPaciente>> obtenerTodosIncluidoInactivos()
+    {
+        try{
+            List<HospitalizacionPaciente> HospitalizacionPacientes = servicio.obtenerTodosIncluidoInactivos();
+            if(HospitalizacionPacientes.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            return new ResponseEntity<>(items, HttpStatus.OK);
-        } catch (Exception e) {
+            return new ResponseEntity<>(HospitalizacionPacientes, HttpStatus.OK);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<HosHospitalizacionPaciente> obtenerPorId(@PathVariable("id") Integer id) {
-        Optional<HosHospitalizacionPaciente> itemOpcional = repositorio.findById(id);
+    //#endregion
 
-        if (itemOpcional.isPresent()) {
-            return new ResponseEntity<>(itemOpcional.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
 
     @PostMapping
-    public ResponseEntity<HosHospitalizacionPaciente> crear(@RequestBody HosHospitalizacionPaciente item) {
-        try {
-            HosHospitalizacionPaciente itemSalvado = repositorio.save(item);
-            return new ResponseEntity<>(itemSalvado, HttpStatus.CREATED);
-        } catch (Exception e) {
+    public ResponseEntity<HospitalizacionPaciente> crear(@RequestBody HospitalizacionPaciente HospitalizacionPaciente)
+    {
+        try{
+            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.guardar(HospitalizacionPaciente);
+            return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.CREATED);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
+
     @PutMapping("{id}")
-    public ResponseEntity<HosHospitalizacionPaciente> actualizar(@PathVariable("id") Integer id, @RequestBody HosHospitalizacionPaciente item) {
-        Optional<HosHospitalizacionPaciente> itemOpcional = repositorio.findById(id);
-        if (itemOpcional.isPresent()) {
-            HosHospitalizacionPaciente itemExistente = itemOpcional.get();
-            itemExistente.setFechaActualizacion(new Date());
-            itemExistente.setFechaIngreso(item.getFechaIngreso());
-            itemExistente.setFechaSalida(item.getFechaSalida());
-            itemExistente.setMotivo(item.getMotivo());
-            return new ResponseEntity<>(repositorio.save(itemExistente), HttpStatus.OK);
-        } else {
+    public ResponseEntity<HospitalizacionPaciente> actualizar(@PathVariable Integer id, HospitalizacionPaciente HospitalizacionPaciente)
+    {
+        try {
+            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.actualizar(HospitalizacionPaciente);
+            return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> borrar(@PathVariable("id") Integer id) {
+    public ResponseEntity<HospitalizacionPaciente> borrar(@PathVariable("id") Integer id)
+    {
         try {
-            Optional<HosHospitalizacionPaciente> itemsOpcional = repositorio.findById(id);
-            //Si no existe
-            if(!itemsOpcional.isPresent())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            
-            //Si ya está desactivado
-            if(itemsOpcional.get().getEstadoHosPaciente() == "I")
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            //Pone en I el estado
-            HosHospitalizacionPaciente itemExistente = itemsOpcional.get();
-            itemExistente.setEstadoHosPaciente("I");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            HospitalizacionPaciente HospitalizacionPacienteBorrado = servicio.borrar(id);
+            return new ResponseEntity<>(HospitalizacionPacienteBorrado ,HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
+
+
 }

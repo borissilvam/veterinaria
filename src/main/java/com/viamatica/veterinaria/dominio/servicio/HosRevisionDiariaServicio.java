@@ -62,9 +62,9 @@ public class HosRevisionDiariaServicio {
         return  mapeador.toRevisionDiaria(repositorio.save(hosRevisionDiaria.get()));
     }
 
-    public RevisionDiaria borrar(RevisionDiaria RevisionDiaria)
+    public RevisionDiaria borrar(Integer idRevisionDiaria)
     {
-        Optional<HosRevisionDiaria> hosRevisionDiaria = repositorio.findById(RevisionDiaria.getIdRevisionDiaria());
+        Optional<HosRevisionDiaria> hosRevisionDiaria = repositorio.findById(idRevisionDiaria);
         if(hosRevisionDiaria.get() == null)
             return null;
 

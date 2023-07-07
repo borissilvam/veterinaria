@@ -17,102 +17,97 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.viamatica.veterinaria.modelo.HosHospitalizacionPaciente;
-import com.viamatica.veterinaria.modelo.HosRevisionDiaria;
-import com.viamatica.veterinaria.repositorio.HosRevisionDiariaRepositorio;
+import com.viamatica.veterinaria.dominio.RevisionDiaria;
+import com.viamatica.veterinaria.dominio.servicio.HosRevisionDiariaServicio;
 
 @RestController
 @RequestMapping("/HosRevisionDiaria")
 class HosRevisionDiariaControlador {
 
     @Autowired
-    HosRevisionDiariaRepositorio repositorio;
+    HosRevisionDiariaServicio servicio;
+
+    
+    //#region lectura
+    @GetMapping("/id/{id}")
+    public ResponseEntity<RevisionDiaria> obtenerPorId(@PathVariable("id") Integer id)
+    {
+        try{
+            RevisionDiaria RevisionDiaria = servicio.obtenerPorId(id);
+            if (RevisionDiaria == null)
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(RevisionDiaria, HttpStatus.OK);
+        }catch(Exception e)
+        {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping
-    public ResponseEntity<List<HosRevisionDiaria>> obtenerTodos() {
-        try {
-            List<HosRevisionDiaria> items = new ArrayList<HosRevisionDiaria>();
-
-            repositorio.findAll().stream().filter( item -> item.getEstadoHosRevisiondiaria()!=null && item.getEstadoHosRevisiondiaria().equals("A")).forEach(items::add);
-
-            if (items.isEmpty())
+    public ResponseEntity<List<RevisionDiaria>> obtenerTodos()
+    {
+        try{
+            List<RevisionDiaria> RevisionDiarias = servicio.obtenerTodos();
+            if(RevisionDiarias.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            return new ResponseEntity<>(items, HttpStatus.OK);
-        } catch (Exception e) {
+            return new ResponseEntity<>(RevisionDiarias, HttpStatus.OK);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/incluidoBorrados")
-    public ResponseEntity<List<HosRevisionDiaria>> obtenerTodosIncluidoBorrados() {
-        try {
-            List<HosRevisionDiaria> items = new ArrayList<HosRevisionDiaria>();
-
-            repositorio.findAll().forEach(items::add);
-
-            if (items.isEmpty())
+    @GetMapping("/incluidoInactivos")
+    public ResponseEntity<List<RevisionDiaria>> obtenerTodosIncluidoInactivos()
+    {
+        try{
+            List<RevisionDiaria> RevisionDiarias = servicio.obtenerTodosIncluidoInactivos();
+            if(RevisionDiarias.isEmpty())
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            return new ResponseEntity<>(items, HttpStatus.OK);
-        } catch (Exception e) {
+            return new ResponseEntity<>(RevisionDiarias, HttpStatus.OK);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<HosRevisionDiaria> obtenerPorId(@PathVariable("id") Integer id) {
-        Optional<HosRevisionDiaria> itemOpcional = repositorio.findById(id);
+    //#endregion
 
-        if (itemOpcional.isPresent()) {
-            return new ResponseEntity<>(itemOpcional.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
 
     @PostMapping
-    public ResponseEntity<HosRevisionDiaria> crear(@RequestBody HosRevisionDiaria item) {
-        try {
-            HosRevisionDiaria itemSalvado = repositorio.save(item);
-            return new ResponseEntity<>(itemSalvado, HttpStatus.CREATED);
-        } catch (Exception e) {
+    public ResponseEntity<RevisionDiaria> crear(@RequestBody RevisionDiaria RevisionDiaria)
+    {
+        try{
+            RevisionDiaria RevisionDiariaSalvado = servicio.guardar(RevisionDiaria);
+            return new ResponseEntity<RevisionDiaria>(RevisionDiariaSalvado, HttpStatus.CREATED);
+        }catch(Exception e)
+        {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
+
     @PutMapping("{id}")
-    public ResponseEntity<HosRevisionDiaria> actualizar(@PathVariable("id") Integer id, @RequestBody HosRevisionDiaria item) {
-        Optional<HosRevisionDiaria> itemOpcional = repositorio.findById(id);
-        if (itemOpcional.isPresent()) {
-            HosRevisionDiaria itemExistente = itemOpcional.get();
-            itemExistente.setFechaActulizacion(new Date());
-            itemExistente.setFechaRevision(item.getFechaRevision());
-            itemExistente.setIdPaciente(item.getIdPaciente());
-            return new ResponseEntity<>(repositorio.save(itemExistente), HttpStatus.OK);
-        } else {
+    public ResponseEntity<RevisionDiaria> actualizar(@PathVariable Integer id, RevisionDiaria RevisionDiaria)
+    {
+        try {
+            RevisionDiaria RevisionDiariaSalvado = servicio.actualizar(RevisionDiaria);
+            return new ResponseEntity<RevisionDiaria>(RevisionDiariaSalvado, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> borrar(@PathVariable("id") Integer id) {
+    public ResponseEntity<RevisionDiaria> borrar(@PathVariable("id") Integer id)
+    {
         try {
-            Optional<HosRevisionDiaria> itemsOpcional = repositorio.findById(id);
-            //Si no existe
-            if(!itemsOpcional.isPresent())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            
-            //Si ya está desactivado
-            if(itemsOpcional.get().getEstadoHosRevisiondiaria() == "I")
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-            //Pone en I el estado
-            HosRevisionDiaria itemExistente = itemsOpcional.get();
-            itemExistente.setEstadoHosRevisiondiaria("I");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            RevisionDiaria RevisionDiariaBorrado = servicio.borrar(id);
+            return new ResponseEntity<>(RevisionDiariaBorrado ,HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
+
+
 }

@@ -79,9 +79,9 @@ public class HosHospitalizacionPacienteServicio {
         return  mapeador.toHospitalizacionPaciente(repositorio.save(hosHospitalizacionPaciente.get()));
     }
 
-    public HospitalizacionPaciente borrar(HospitalizacionPaciente HospitalizacionPaciente)
+    public HospitalizacionPaciente borrar(Integer idHospitalizacionPaciente)
     {
-        Optional<HosHospitalizacionPaciente> hosHospitalizacionPaciente = repositorio.findById(HospitalizacionPaciente.getIdHospitalizacion());
+        Optional<HosHospitalizacionPaciente> hosHospitalizacionPaciente = repositorio.findById(idHospitalizacionPaciente);
         if(hosHospitalizacionPaciente.get() == null)
             return null;
 

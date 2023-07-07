@@ -63,9 +63,9 @@ public class HosTipoCirugiaServicio {
         return  mapeador.toTipoCirugia(repositorio.save(hosTipoCirugia.get()));
     }
 
-    public TipoCirugia borrar(TipoCirugia tipoCirugia)
+    public TipoCirugia borrar(Integer idTipoCirugia)
     {
-        Optional<HosTipoCirugia> hosTipoCirugia = repositorio.findById(tipoCirugia.getIdHosTipoCirugia());
+        Optional<HosTipoCirugia> hosTipoCirugia = repositorio.findById(idTipoCirugia);
         if(hosTipoCirugia.get() == null)
             return null;
 
