@@ -83,8 +83,8 @@ public class HosTipoCirugiaControlador {
     }
 
 
-    @PutMapping("{id}")
-    public ResponseEntity<TipoCirugia> actualizar(@PathVariable Integer id, TipoCirugia tipoCirugia)
+    @PutMapping
+    public ResponseEntity<TipoCirugia> actualizar(@RequestBody TipoCirugia tipoCirugia)
     {
         try {
             TipoCirugia tipoCirugiaSalvado = servicio.actualizar(tipoCirugia);
@@ -94,7 +94,7 @@ public class HosTipoCirugiaControlador {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<TipoCirugia> borrar(@PathVariable("id") Integer id)
     {
         try {

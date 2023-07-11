@@ -17,4 +17,5 @@ public class HospitalizacionPaciente {
 
     private String motivo;
 
+    private String estadoHosPaciente;
 }

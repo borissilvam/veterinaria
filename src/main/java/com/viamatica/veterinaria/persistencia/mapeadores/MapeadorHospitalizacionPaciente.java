@@ -18,7 +18,8 @@ public interface MapeadorHospitalizacionPaciente {
         @Mapping(source = "idPaciente", target = "idPaciente"),
         @Mapping(source = "fechaIngreso", target = "fechaIngreso"),
         @Mapping(source = "fechaSalida", target = "fechaSalida"),
-        @Mapping(source = "motivo", target = "motivo")
+        @Mapping(source = "motivo", target = "motivo"),
+        @Mapping(source = "estadoHosPaciente", target = "estadoHosPaciente")
     })
     HospitalizacionPaciente toHospitalizacionPaciente(HosHospitalizacionPaciente hosHospitalizacionPaciente);
 
@@ -28,8 +29,7 @@ public interface MapeadorHospitalizacionPaciente {
     @Mappings({
         @Mapping(target="fechaCreacion", ignore = true),
         @Mapping(target="fechaActualizacion", ignore = true),
-        @Mapping(target="fechaEliminacion", ignore = true),
-        @Mapping(target="estadoHosPaciente", ignore = true)
+        @Mapping(target="fechaEliminacion", ignore = true)
     })
     HosHospitalizacionPaciente toHosHospitalizacionPaciente(HospitalizacionPaciente hospitalizacionPaciente);
 

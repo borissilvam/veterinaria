@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +34,7 @@ public class HosHospitalizacionPaciente {
     @Column(name = "motivo")
     private String motivo;
 
-    @Column(name = "estado")
+    @Column(name = "estadoHosPaciente")
     private String estadoHosPaciente;
 
     @Column(name = "fechaCreacion")
@@ -47,5 +48,7 @@ public class HosHospitalizacionPaciente {
      @Column(name ="fechaEliminacion")
     private Date fechaEliminacion;
     
-    
+    public HosHospitalizacionPaciente() {
+        this.fechaCreacion = new Date();
+    }
 }

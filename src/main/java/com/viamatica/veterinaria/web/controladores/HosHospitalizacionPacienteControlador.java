@@ -84,9 +84,8 @@ class HosHospitalizacionPacienteControlador {
         }
     }
 
-
-    @PutMapping("{id}")
-    public ResponseEntity<HospitalizacionPaciente> actualizar(@PathVariable Integer id, HospitalizacionPaciente HospitalizacionPaciente)
+    @PutMapping
+    public ResponseEntity<HospitalizacionPaciente> actualizar(@RequestBody HospitalizacionPaciente HospitalizacionPaciente)
     {
         try {
             HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.actualizar(HospitalizacionPaciente);
@@ -96,7 +95,7 @@ class HosHospitalizacionPacienteControlador {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HospitalizacionPaciente> borrar(@PathVariable("id") Integer id)
     {
         try {

@@ -12,26 +12,26 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(customizeRequests -> {
-                    customizeRequests
-                            .requestMatchers(HttpMethod.GET, "/perfil/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.POST, "/perfil/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PUT).denyAll()
-                            .anyRequest()
-                            .authenticated();
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //     http
+    //             .csrf(AbstractHttpConfigurer::disable)
+    //             .authorizeHttpRequests(customizeRequests -> {
+    //                 customizeRequests
+    //                         .requestMatchers(HttpMethod.GET, "/perfil/**").hasRole("ADMIN")
+    //                         .requestMatchers(HttpMethod.POST, "/perfil/**").hasRole("ADMIN")
+    //                         .requestMatchers(HttpMethod.PUT).denyAll()
+    //                         .anyRequest()
+    //                         .authenticated();
 
 
-                })
-                .httpBasic(Customizer.withDefaults());
-        return http.build();
-    }
+    //             })
+    //             .httpBasic(Customizer.withDefaults());
+    //     return http.build();
+    // }
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    // @Bean
+    // public PasswordEncoder passwordEncoder(){
+    //     return new BCryptPasswordEncoder();
+    // }
 }

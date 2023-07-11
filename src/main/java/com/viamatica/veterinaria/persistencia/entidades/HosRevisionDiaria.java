@@ -32,7 +32,7 @@ public class HosRevisionDiaria
     @Column(name = "idPaciente")
     private Integer idPaciente;
 
-    @Column(name = "estado")
+    @Column(name = "estadoHosRevisiondiaria")
     private String estadoHosRevisiondiaria;
     
     @Column(name = "fechaCreacion")
@@ -46,6 +46,8 @@ public class HosRevisionDiaria
      @Column(name ="fechaEliminacion")
     private Date fechaEliminacion;
     
-
+    public HosRevisionDiaria() {
+        this.fechaCreacion = new Date();
+    }
     
 }

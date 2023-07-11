@@ -86,8 +86,8 @@ class HosCirugiaControlador {
     }
 
 
-    @PutMapping("{id}")
-    public ResponseEntity<Cirugia> actualizar(@PathVariable Integer id, Cirugia Cirugia)
+    @PutMapping
+    public ResponseEntity<Cirugia> actualizar(@RequestBody Cirugia Cirugia)
     {
         try {
             Cirugia CirugiaSalvado = servicio.actualizar(Cirugia);

@@ -15,7 +15,8 @@ public interface MapeadorTipoCirugia {
     
     @Mappings({
         @Mapping(source = "idHosTipoCirugia", target="idHosTipoCirugia"),
-        @Mapping(source = "tipoCirugia", target="tipoCirugia")
+        @Mapping(source = "tipoCirugia", target="tipoCirugia"),
+        @Mapping(source = "estadoTipoCirugia", target="estadoTipoCirugia")
     })
     TipoCirugia toTipoCirugia(HosTipoCirugia hosTipoCirugia);
 
@@ -25,8 +26,7 @@ public interface MapeadorTipoCirugia {
     @Mappings({
         @Mapping(target="fechaCreacion", ignore = true),
         @Mapping(target="fechaActualizacion", ignore = true),
-        @Mapping(target="fechaEliminacion", ignore = true),
-        @Mapping(target="estadoTipoCirugia", ignore = true)
+        @Mapping(target="fechaEliminacion", ignore = true)
     })
     HosTipoCirugia toHosTipoCirugia(TipoCirugia tipoCirugia);
 

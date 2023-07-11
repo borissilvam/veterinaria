@@ -20,7 +20,7 @@ public class HosCirugia {
     @Column(name = "idPaciente")
     private Integer idPaciente;
 
-    @Column(name = "tipoCirugia")
+    @Column(name = "idHostipoCirugia")
     private Integer idHosTipoCirugia;
 
     @Column(name = "fechaProgramada")
@@ -43,6 +43,8 @@ public class HosCirugia {
     @Column(name ="fechaEliminacion")
     private Date fechaEliminacion;
     
-
+    public HosCirugia() {
+        this.fechaCreacion = new Date();
+    }
     
 }

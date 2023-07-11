@@ -16,6 +16,6 @@ public class RevisionDiaria {
     
     private Integer idPaciente;
     
-    
+    private String estadoHosRevisiondiaria;
 
 }

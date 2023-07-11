@@ -17,7 +17,8 @@ public interface MapeadorRevisionDiaria {
         @Mapping(source = "idRevisionDiaria", target = "idRevisionDiaria"),
         @Mapping(source = "fechaRevision", target = "fechaRevision"),
         @Mapping(source = "idPaciente", target = "idPaciente"),
-        @Mapping(source = "detalle", target = "detalle")
+        @Mapping(source = "detalle", target = "detalle"),
+        @Mapping(source = "estadoHosRevisiondiaria", target = "estadoHosRevisiondiaria")
     })
     RevisionDiaria toRevisionDiaria(HosRevisionDiaria hosRevisionDiaria);
 
@@ -29,8 +30,7 @@ public interface MapeadorRevisionDiaria {
     @Mappings({
         @Mapping(target="fechaCreacion", ignore = true),
         @Mapping(target="fechaActualizacion", ignore = true),
-        @Mapping(target="fechaEliminacion", ignore = true),
-        @Mapping(target="estadoHosRevisiondiaria", ignore = true)
+        @Mapping(target="fechaEliminacion", ignore = true)
     })
     HosRevisionDiaria toHosRevisionDiaria(RevisionDiaria revisionDiaria);
 
