@@ -41,15 +41,15 @@ public class GesCliente {
     Integer idUsuario;
 
 
-    @Column(name = "fechaCreacion")
-    @CreationTimestamp
-    private LocalDateTime fechaCreacion;
+    // @Column(name = "fechaCreacion")
+    // @CreationTimestamp
+    // private LocalDateTime fechaCreacion;
 
-    @Column(name = "fechaActualizacion")
-    @UpdateTimestamp
-    private LocalDateTime fechaActualizacion;
+    // @Column(name = "fechaActualizacion")
+    // @UpdateTimestamp
+    // private LocalDateTime fechaActualizacion;
 
-     @Column(name ="fechaEliminacion")
-    private LocalDateTime fechaEliminacion;
+    //  @Column(name ="fechaEliminacion")
+    // private LocalDateTime fechaEliminacion;
 
 }

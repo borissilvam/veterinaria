@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.viamatica.veterinaria.dominio.Cirugia;
 import com.viamatica.veterinaria.persistencia.crud.HosCirugiaRepositorio;
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
 import com.viamatica.veterinaria.persistencia.entidades.HisDoctor;
 import com.viamatica.veterinaria.persistencia.entidades.HosCirugia;
 import com.viamatica.veterinaria.persistencia.entidades.HosTipoCirugia;
@@ -32,7 +33,7 @@ public class HosCirugiaServicio
     public Cirugia obtenerPorId(Integer id)
     {
         Optional<HosCirugia> hosCirugia = repositorio.findById(id);
-        return mapeadorCirugia.toCirugia( hosCirugia.get());
+        return mapeadorCirugia.toCirugia( hosCirugia.isPresent() ? hosCirugia.get() : null);
     }
 
 
@@ -43,9 +44,9 @@ public class HosCirugiaServicio
             ).toList());
     }
 
-    public List<Cirugia> obtenerPorIdPaciente(Integer idPaciente)
+    public List<Cirugia> obtenerPorIdPaciente(GesPaciente idPaciente)
     {
-        return mapeadorCirugia.toCirugias( repositorio.findByIdPaciente(idPaciente));
+        return mapeadorCirugia.toCirugias( repositorio.findByPaciente(idPaciente));
     }
 
     public List<Cirugia> obtenerPorIdDoctor(Integer idDoctor)
@@ -78,7 +79,7 @@ public class HosCirugiaServicio
     public Cirugia actualizar(Cirugia Cirugia)
     {   
         Optional<HosCirugia> hosCirugia = repositorio.findById(Cirugia.getIdHosCirugia());
-        if(!hosCirugia.isPresent())
+        if(hosCirugia.isEmpty())
             return null;
         
         hosCirugia.get().setFechaProgramada(Cirugia.getFechaProgramada());
@@ -91,7 +92,7 @@ public class HosCirugiaServicio
     public Cirugia borrar(Integer idCirugia)
     {
         Optional<HosCirugia> hosCirugia = repositorio.findById(idCirugia);
-        if(!hosCirugia.isPresent())
+        if(hosCirugia.isEmpty())
             return null;
 
         hosCirugia.get().setEstadoCirugia("I");

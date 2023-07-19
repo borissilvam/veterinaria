@@ -43,16 +43,16 @@ public class HisDoctor {
     @Column
     String estadoDoctor;
 
-    @Column
-    @CreationTimestamp
-    LocalDateTime fechaCreacion;
+    // @Column
+    // @CreationTimestamp
+    // LocalDateTime fechaCreacion;
 
-    @Column
-    @UpdateTimestamp
-    LocalDateTime fechaActualizacion;
+    // @Column
+    // @UpdateTimestamp
+    // LocalDateTime fechaActualizacion;
 
-    @Column
-    LocalDateTime fechaEliminacion;
+    // @Column
+    // LocalDateTime fechaEliminacion;
 
 
 }

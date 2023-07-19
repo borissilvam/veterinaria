@@ -32,7 +32,9 @@ public class GesPaciente {
 
     String raza;
 
-    String idTipoPaciente;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idTipoPaciente")
+    GesTipoPaciente tipoPaciente;
 
     @OneToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "idCliente")
@@ -40,15 +42,15 @@ public class GesPaciente {
 
     String estadoPaciente;
 
-    @Column(name = "fechaCreacion")
-    @CreationTimestamp
-    private LocalDateTime fechaCreacion;
+    // @Column(name = "fechaCreacion")
+    // @CreationTimestamp
+    // private LocalDateTime fechaCreacion;
 
-    @Column(name = "fechaActualizacion")
-    @UpdateTimestamp
-    private LocalDateTime fechaActualizacion;
+    // @Column(name = "fechaActualizacion")
+    // @UpdateTimestamp
+    // private LocalDateTime fechaActualizacion;
 
-     @Column(name ="fechaEliminacion")
-    private LocalDateTime fechaEliminacion;
+    //  @Column(name ="fechaEliminacion")
+    // private LocalDateTime fechaEliminacion;
     
 }

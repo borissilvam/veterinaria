@@ -25,7 +25,7 @@ public class HosTipoCirugiaServicio {
     public TipoCirugia obtenerPorId(Integer id)
     {
         Optional<HosTipoCirugia> hosTipoCirugia = repositorio.findById(id);
-        return mapeador.toTipoCirugia( hosTipoCirugia.get());
+        return mapeador.toTipoCirugia( hosTipoCirugia.isPresent() ? hosTipoCirugia.get() : null);
     }
 
     public List<TipoCirugia> obtenerTodos()
@@ -55,7 +55,7 @@ public class HosTipoCirugiaServicio {
     public TipoCirugia actualizar(TipoCirugia tipoCirugia)
     {   
         Optional<HosTipoCirugia> hosTipoCirugia = repositorio.findById(tipoCirugia.getIdHosTipoCirugia());
-        if(hosTipoCirugia.get() == null)
+        if(hosTipoCirugia.isEmpty())
             return null;
         
         
@@ -67,7 +67,7 @@ public class HosTipoCirugiaServicio {
     public TipoCirugia borrar(Integer idTipoCirugia)
     {
         Optional<HosTipoCirugia> hosTipoCirugia = repositorio.findById(idTipoCirugia);
-        if(hosTipoCirugia.get() == null)
+        if(hosTipoCirugia.isEmpty())
             return null;
 
         hosTipoCirugia.get().setEstadoTipoCirugia("I");

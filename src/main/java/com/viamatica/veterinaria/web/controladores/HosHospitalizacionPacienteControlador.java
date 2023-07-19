@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.viamatica.veterinaria.dominio.HospitalizacionPaciente;
 import com.viamatica.veterinaria.dominio.servicio.HosHospitalizacionPacienteServicio;
+import com.viamatica.veterinaria.web.RespuestaServidor;
 
 
 @RestController
@@ -28,28 +29,35 @@ class HosHospitalizacionPacienteControlador {
 
     
     //#region lectura
-    @GetMapping("/id/{id}")
-    public ResponseEntity<HospitalizacionPaciente> obtenerPorId(@PathVariable("id") Integer id)
+    @GetMapping("{id}")
+    public ResponseEntity<Object> obtenerPorId(@PathVariable("id") Integer id)
     {
         try{
             HospitalizacionPaciente HospitalizacionPaciente = servicio.obtenerPorId(id);
+
             if (HospitalizacionPaciente == null)
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>( new RespuestaServidor(HttpStatus.NOT_FOUND, "No se encontró cirugia con el id:" + id), HttpStatus.NOT_FOUND);
+
             return new ResponseEntity<>(HospitalizacionPaciente, HttpStatus.OK);
+
         }catch(Exception e)
         {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<HospitalizacionPaciente>> obtenerTodos()
+    public ResponseEntity<Object> obtenerTodos()
     {
         try{
             List<HospitalizacionPaciente> HospitalizacionPacientes = servicio.obtenerTodos();
+
             if(HospitalizacionPacientes.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new RespuestaServidor(HttpStatus.NO_CONTENT, "No hay datos"), HttpStatus.NO_CONTENT);
+
             return new ResponseEntity<>(HospitalizacionPacientes, HttpStatus.OK);
+
         }catch(Exception e)
         {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -57,13 +65,16 @@ class HosHospitalizacionPacienteControlador {
     }
 
     @GetMapping("/incluidoInactivos")
-    public ResponseEntity<List<HospitalizacionPaciente>> obtenerTodosIncluidoInactivos()
+    public ResponseEntity<Object> obtenerTodosIncluidoInactivos()
     {
         try{
             List<HospitalizacionPaciente> HospitalizacionPacientes = servicio.obtenerTodosIncluidoInactivos();
+
             if(HospitalizacionPacientes.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new RespuestaServidor(HttpStatus.NO_CONTENT, "No hay datos"), HttpStatus.NO_CONTENT);  
+
             return new ResponseEntity<>(HospitalizacionPacientes, HttpStatus.OK);
+
         }catch(Exception e)
         {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -74,20 +85,37 @@ class HosHospitalizacionPacienteControlador {
 
 
     @PostMapping
-    public ResponseEntity<HospitalizacionPaciente> crear(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
+    public ResponseEntity<Object> crear(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
     {
         try{
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.UNPROCESSABLE_ENTITY);
             hospitalizacionPaciente.setIdHospitalizacion(null);
+
+            //Validaciones de los datos
             if(servicio.pacienteSigueHospitalizado(hospitalizacionPaciente.getPaciente().getIdPaciente()))
-            {
-                return new ResponseEntity("Paciente ya está hospitalizado", HttpStatus.EXPECTATION_FAILED);
-            }
-            if(hospitalizacionPaciente.getFechaSalida().isBefore(LocalDateTime.now()) )
-            {
-                return new ResponseEntity("La fecha de salida es anterior a la de entrada ", HttpStatus.EXPECTATION_FAILED);
-            }
+                respuestaServidor.anadirMensaje("El paciente ya se encuentra hospitalizado");
+
+            if(hospitalizacionPaciente.getFechaIngreso()!=null && hospitalizacionPaciente.getFechaIngreso().isBefore(LocalDateTime.now()) )
+                respuestaServidor.anadirMensaje("La fecha es anterior a la actual");
+
+            if(hospitalizacionPaciente.getFechaSalida()!=null && hospitalizacionPaciente.getFechaSalida().isBefore(LocalDateTime.now()) )
+                respuestaServidor.anadirMensaje("La fecha es anterior a la actual");
+
+            //Si hay error con los datos enviados devulve los errores
+            if(!respuestaServidor.getMensajes().isEmpty())
+                return new ResponseEntity<Object>(respuestaServidor, respuestaServidor.getStatus());    
+
+            //Intenta guardar el objeto
             HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.guardar(hospitalizacionPaciente);
-            return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.CREATED);
+
+            if(HospitalizacionPacienteSalvado == null)
+            {
+                respuestaServidor.anadirMensaje("No se pudo guardar el registro");
+                return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+            }
+
+            respuestaServidor = new RespuestaServidor(HttpStatus.OK, "Se guardó correctamente");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }catch(Exception e)
         {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -95,32 +123,58 @@ class HosHospitalizacionPacienteControlador {
     }
 
     @PutMapping
-    public ResponseEntity<HospitalizacionPaciente> actualizar(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
+    public ResponseEntity<Object> actualizar(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
     {
         try {
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.UNPROCESSABLE_ENTITY);
+
+             //Validaciones de los datos
             if(hospitalizacionPaciente.getFechaSalida()!=null && hospitalizacionPaciente.getFechaSalida().isBefore(hospitalizacionPaciente.getFechaIngreso()) )
-            {
-                return new ResponseEntity("La fecha de salida es anterior a la de entrada ", HttpStatus.EXPECTATION_FAILED);
-            }
+                respuestaServidor.anadirMensaje("La fecha de salida es anterior a la de entrada" );
+            
+            //Si hay error con los datos enviados devulve los errores
+            if(!respuestaServidor.getMensajes().isEmpty())
+                return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+
+            //Intenta actualizar el objeto
             HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.actualizar(hospitalizacionPaciente);
-            return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.OK);
+
+            //Si no se pudo actualizar devuelve error
+            if(HospitalizacionPacienteSalvado == null)
+            {
+                respuestaServidor.anadirMensaje("No se pudo actualizar el registro de Hospitalizacion con el id: " + hospitalizacionPaciente.getIdHospitalizacion());
+                return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+            }
+
+            //Si todo salió bien devuelve mensaje del servidor OK
+
+            respuestaServidor = new RespuestaServidor(HttpStatus.OK, "Se actualizó correctamente");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HospitalizacionPaciente> borrar(@PathVariable("id") Integer id)
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> borrar(@PathVariable("id") Integer id)
     {
         try {
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.NOT_FOUND);
+
             HospitalizacionPaciente hospitalizacion = servicio.borrar(id);
+
             if(hospitalizacion == null)
             {
-                return new ResponseEntity("No existe el registro con el siguiente id: " + id, HttpStatus.NOT_FOUND);
+                respuestaServidor.anadirMensaje( "No existe el registro con el siguiente id: " + id);
+                return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
             }
-            return new ResponseEntity<>(hospitalizacion ,HttpStatus.NO_CONTENT);
+
+            respuestaServidor = new RespuestaServidor( HttpStatus.OK, "Se borró correctamente");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 

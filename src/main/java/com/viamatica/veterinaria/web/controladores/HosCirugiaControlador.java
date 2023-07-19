@@ -2,6 +2,7 @@ package com.viamatica.veterinaria.web.controladores;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.viamatica.veterinaria.dominio.Cirugia;
 import com.viamatica.veterinaria.dominio.servicio.HosCirugiaServicio;
 import com.viamatica.veterinaria.dominio.servicio.HosTipoCirugiaServicio;
-import com.viamatica.veterinaria.dominio.validaciones.Validador;
+import com.viamatica.veterinaria.web.RespuestaServidor;
 
 
 
@@ -34,46 +34,64 @@ class HosCirugiaControlador {
     @Autowired
     HosTipoCirugiaServicio servicioTipoCirugia;
 
+
+
     //#region lectura
     @GetMapping("{id}")
-    public ResponseEntity<Cirugia> obtenerPorId(@PathVariable("id") Integer id)
+    public ResponseEntity<Object> obtenerPorId(@PathVariable("id") Integer id)
     {
         try{
             Cirugia Cirugia = servicioCirugia.obtenerPorId(id);
+
             if (Cirugia == null)
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(  new RespuestaServidor(HttpStatus.NOT_FOUND, "No se encontró cirugia con el id:" + id), HttpStatus.NOT_FOUND);
+
             return new ResponseEntity<>(Cirugia, HttpStatus.OK);
+            
         }catch(Exception e)
         {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 
+
+
     @GetMapping
-    public ResponseEntity<List<Cirugia>> obtenerTodos()
+    public ResponseEntity<Object> obtenerTodos()
     {
         try{
             List<Cirugia> Cirugias = servicioCirugia.obtenerTodos();
+
             if(Cirugias.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new RespuestaServidor(HttpStatus.NO_CONTENT, "No hay datos"), HttpStatus.NO_CONTENT);
+
             return new ResponseEntity<>(Cirugias, HttpStatus.OK);
+
         }catch(Exception e)
         {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 
+
+
     @GetMapping("/incluidoInactivos")
-    public ResponseEntity<List<Cirugia>> obtenerTodosIncluidoInactivos()
+    public ResponseEntity<Object> obtenerTodosIncluidoInactivos()
     {
         try{
             List<Cirugia> Cirugias = servicioCirugia.obtenerTodosIncluidoInactivos();
+
             if(Cirugias.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(new RespuestaServidor(HttpStatus.NO_CONTENT, "No hay datos"), HttpStatus.NO_CONTENT);  
+
             return new ResponseEntity<>(Cirugias, HttpStatus.OK);
+
         }catch(Exception e)
         {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 
@@ -81,68 +99,120 @@ class HosCirugiaControlador {
 
 
     @PostMapping
-    public ResponseEntity<Cirugia> crear(@RequestBody Cirugia cirugia)
+    public ResponseEntity<Object> crear(@RequestBody Cirugia cirugia)
     {
         try{
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.UNPROCESSABLE_ENTITY);
             cirugia.setIdHosCirugia(null);
+
+            //Validaciones de los datos
             if( cirugia.getFechaProgramada().isBefore(LocalDateTime.now())) 
-            {
-                return new ResponseEntity( "La fecha es anterior a la fecha actual", HttpStatus.EXPECTATION_FAILED);
-            }
+                respuestaServidor.anadirMensaje("La fecha es anterior a la fecha actual");
+
             if(servicioTipoCirugia.obtenerPorId(cirugia.getTipoCirugia().getIdHosTipoCirugia()) == null)
-            {
-                return new ResponseEntity( "El tipo de cirugia no se encuentra en el registro", HttpStatus.EXPECTATION_FAILED);
-            }
+                respuestaServidor.anadirMensaje("El tipo de cirugia no se encuentra en el registro");
 
-            Cirugia CirugiaSalvado = servicioCirugia.guardar(cirugia);
+            //Si hay error con los datos enviados devulve los errores
+            if(!respuestaServidor.getMensajes().isEmpty())
+                return new ResponseEntity<Object>(respuestaServidor, respuestaServidor.getStatus());
 
+            //Intenta guardar el objeto
+            servicioCirugia.guardar(cirugia);
 
-            return new ResponseEntity<Cirugia>(CirugiaSalvado, HttpStatus.CREATED);
+            respuestaServidor = new RespuestaServidor(HttpStatus.CREATED, "Se guardó correctamente");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+
         }catch(Exception e)
         {
-            return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
+
 
 
     @PutMapping
-    public ResponseEntity<Cirugia> actualizar(@RequestBody Cirugia cirugia)
+    public ResponseEntity<Object> actualizar(@RequestBody Cirugia cirugia)
     {
         try {
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.UNPROCESSABLE_ENTITY);
 
-            if(Validador.fechaAntesDeHoy(cirugia.getFechaProgramada())) 
-            {
-                return new ResponseEntity( "La fecha es anterior a la fecha actual", HttpStatus.EXPECTATION_FAILED);
-            }
+            //Validaciones de los datos
+            if( cirugia.getFechaProgramada().isBefore(LocalDateTime.now())) 
+                respuestaServidor.anadirMensaje("La fecha es anterior a la fecha actual");
+
+            if(servicioTipoCirugia.obtenerPorId(cirugia.getTipoCirugia().getIdHosTipoCirugia()) == null)
+                respuestaServidor.anadirMensaje("El tipo de cirugia no se encuentra en el registro");
+
+            //Si hay error con los datos enviados devulve los errores
+            if(!respuestaServidor.getMensajes().isEmpty())
+                return new ResponseEntity<Object>(respuestaServidor, respuestaServidor.getStatus());    
+            
+            //Intenta actualizar el objeto
             Cirugia CirugiaSalvado = servicioCirugia.actualizar(cirugia);
-            return new ResponseEntity<Cirugia>(CirugiaSalvado, HttpStatus.OK);
+
+            if(CirugiaSalvado == null)
+                respuestaServidor.anadirMensaje("No Existe en el registro la cirugia con el id: " + cirugia.getIdHosCirugia());
+
+            //Si no se pudo actualizar devuelve error
+            if(!respuestaServidor.getMensajes().isEmpty())
+                return new ResponseEntity<Object>(respuestaServidor, respuestaServidor.getStatus());
+            
+            //Si todo salió bien devuelve mensaje del servidor OK
+            respuestaServidor = new RespuestaServidor(HttpStatus.OK, "Se actualizó correctamente");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
+
+
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Cirugia> borrar(@PathVariable("id") Integer id)
+    public ResponseEntity<Object> borrar(@PathVariable("id") Integer id)
     {
         try {
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.NOT_FOUND);
+
             Cirugia cirugiaBorrado = servicioCirugia.borrar(id);
+
             if(cirugiaBorrado == null)
             {
-                return new ResponseEntity("No existe el registro con el siguiente id: " + id, HttpStatus.NOT_FOUND);
+                respuestaServidor.anadirMensaje( "No existe el registro con el siguiente id: " + id);
+                return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
             }
-            return new ResponseEntity<>(cirugiaBorrado ,HttpStatus.NO_CONTENT);
+
+            respuestaServidor = new RespuestaServidor( HttpStatus.OK, "Se borró correctamente");
+            return new ResponseEntity<>( respuestaServidor , respuestaServidor.getStatus());
+
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 
+
+
     @GetMapping("/fecha/{fecha}")
-    public ResponseEntity<List< Cirugia>> cirugiasPorDia(@PathVariable LocalDate fecha)
+    public ResponseEntity<Object> cirugiasPorDia(@PathVariable LocalDate fecha)
     {
         try {
-            return new ResponseEntity<List<Cirugia>>(servicioCirugia.obtenerPorFechaProgramada(fecha), HttpStatus.OK);
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.NOT_FOUND);
+            var lista =  new ArrayList<Cirugia>(servicioCirugia.obtenerPorFechaProgramada(fecha));
+
+            if(lista.isEmpty())
+            {
+                respuestaServidor.anadirMensaje("No hay cirugias en la fecha: " + fecha);
+                return new ResponseEntity<>(respuestaServidor,respuestaServidor.getStatus());
+            }
+
+            return new ResponseEntity<>( lista, HttpStatus.OK);
+
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            RespuestaServidor respuestaServidor = new RespuestaServidor(HttpStatus.INTERNAL_SERVER_ERROR,"Hubo un error en el servidor");
+            return new ResponseEntity<>(respuestaServidor, respuestaServidor.getStatus());
         }
     }
 

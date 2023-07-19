@@ -18,8 +18,9 @@ public class HosCirugia {
     @Column(name = "idHosCirugia")
     private Integer idHosCirguia;
 
-    @Column(name = "idPaciente")
-    private Integer idPaciente;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idPaciente")
+    private GesPaciente paciente;
 
     @OneToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "idHostipoCirugia")

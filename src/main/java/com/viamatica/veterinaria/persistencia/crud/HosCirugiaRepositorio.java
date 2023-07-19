@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
 import com.viamatica.veterinaria.persistencia.entidades.HisDoctor;
 import com.viamatica.veterinaria.persistencia.entidades.HosCirugia;
 import com.viamatica.veterinaria.persistencia.entidades.HosTipoCirugia;
@@ -22,7 +23,7 @@ import java.util.Date;
 @Repository
 public interface HosCirugiaRepositorio extends JpaRepository<HosCirugia, Integer>{
     
-    List<HosCirugia> findByIdPaciente(Integer idPaciente);
+    List<HosCirugia> findByPaciente(GesPaciente paciente);
 
     List<HosCirugia> findByDoctor(HisDoctor doctor);
 
