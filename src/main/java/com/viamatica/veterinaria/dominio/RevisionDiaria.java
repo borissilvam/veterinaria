@@ -2,6 +2,8 @@ package com.viamatica.veterinaria.dominio;
 
 import java.util.Date;
 
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
+
 import lombok.Data;
 
 @Data
@@ -14,7 +16,7 @@ public class RevisionDiaria {
     
     private Date fechaRevision;
     
-    private Integer idPaciente;
+    private GesPaciente paciente;
     
     private String estadoHosRevisiondiaria;
 

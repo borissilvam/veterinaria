@@ -5,9 +5,14 @@ import org.springframework.stereotype.Service;
 
 import com.viamatica.veterinaria.dominio.Cirugia;
 import com.viamatica.veterinaria.persistencia.crud.HosCirugiaRepositorio;
+import com.viamatica.veterinaria.persistencia.entidades.HisDoctor;
 import com.viamatica.veterinaria.persistencia.entidades.HosCirugia;
+import com.viamatica.veterinaria.persistencia.entidades.HosTipoCirugia;
 import com.viamatica.veterinaria.persistencia.mapeadores.MapeadorCirugia;
+import com.viamatica.veterinaria.persistencia.mapeadores.MapeadorTipoCirugia;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,76 +24,79 @@ public class HosCirugiaServicio
     private HosCirugiaRepositorio repositorio;
 
     @Autowired
-    private MapeadorCirugia mapeador;
+    private MapeadorCirugia mapeadorCirugia;
+    @Autowired
+    private MapeadorTipoCirugia mapeadorTipoCirugia;
 
     //#region lectura
     public Cirugia obtenerPorId(Integer id)
     {
         Optional<HosCirugia> hosCirugia = repositorio.findById(id);
-        return mapeador.toCirugia( hosCirugia.get());
+        return mapeadorCirugia.toCirugia( hosCirugia.get());
     }
 
 
     public List<Cirugia> obtenerTodos()
     {
-        return mapeador.toCirugias( repositorio.findAll().stream().filter(
+        return mapeadorCirugia.toCirugias( repositorio.findAll().stream().filter(
             tipo -> tipo.getEstadoCirugia() !=null && tipo.getEstadoCirugia().equals("A")
             ).toList());
     }
 
     public List<Cirugia> obtenerPorIdPaciente(Integer idPaciente)
     {
-        return mapeador.toCirugias( repositorio.findByIdPaciente(idPaciente));
+        return mapeadorCirugia.toCirugias( repositorio.findByIdPaciente(idPaciente));
     }
 
     public List<Cirugia> obtenerPorIdDoctor(Integer idDoctor)
     {
-        return mapeador.toCirugias( repositorio.findByIdDoctor(idDoctor));
+        return mapeadorCirugia.toCirugias( repositorio.findByDoctor( new HisDoctor(){ {setIdDoctor(idDoctor);}}));
     }
 
-    public List<Cirugia> obtenerPorFechaProgramada(Date fechaProgramada)
+    public List<Cirugia> obtenerPorFechaProgramada(LocalDate fechaProgramada)
     {
-        return mapeador.toCirugias( repositorio.findByFechaProgramada(fechaProgramada));
+        return mapeadorCirugia.toCirugias( repositorio.findByFechaProgramada( fechaProgramada.atStartOfDay() ));
     }
 
     public List<Cirugia> obtenerPorTipoCirugias(Integer idTipoCirugia)
     {
-        return mapeador.toCirugias( repositorio.findByIdHosTipoCirugia(idTipoCirugia));
+        return mapeadorCirugia.toCirugias( repositorio.findByTipoCirugia(new HosTipoCirugia(){{setIdHosTipoCirugia(idTipoCirugia);}}));
     }
 
     public List<Cirugia> obtenerTodosIncluidoInactivos()
     {
-        return mapeador.toCirugias( repositorio.findAll());
+        return mapeadorCirugia.toCirugias( repositorio.findAll());
     }
     //#endregion
     
     public Cirugia guardar(Cirugia Cirugia)
     {
-        HosCirugia hosCirugia = repositorio.save(mapeador.toHosCirugia(Cirugia));
-        return mapeador.toCirugia(hosCirugia);
+        HosCirugia hosCirugia = repositorio.save(mapeadorCirugia.toHosCirugia(Cirugia));
+        return mapeadorCirugia.toCirugia(hosCirugia);
     }
 
     public Cirugia actualizar(Cirugia Cirugia)
     {   
         Optional<HosCirugia> hosCirugia = repositorio.findById(Cirugia.getIdHosCirugia());
-        if(hosCirugia.get() == null)
+        if(!hosCirugia.isPresent())
             return null;
         
         hosCirugia.get().setFechaProgramada(Cirugia.getFechaProgramada());
-        hosCirugia.get().setIdDoctor(Cirugia.getIdDoctor());
+        hosCirugia.get().setDoctor(Cirugia.getDoctor());
+        hosCirugia.get().setTipoCirugia(mapeadorTipoCirugia.toHosTipoCirugia(Cirugia.getTipoCirugia()));
         
-        return  mapeador.toCirugia(repositorio.save(hosCirugia.get()));
+        return  mapeadorCirugia.toCirugia(repositorio.save(hosCirugia.get()));
     }
 
     public Cirugia borrar(Integer idCirugia)
     {
         Optional<HosCirugia> hosCirugia = repositorio.findById(idCirugia);
-        if(hosCirugia.get() == null)
+        if(!hosCirugia.isPresent())
             return null;
 
         hosCirugia.get().setEstadoCirugia("I");
-        hosCirugia.get().setFechaEliminacion(new Date());
-        return  mapeador.toCirugia(repositorio.save(hosCirugia.get()));
+        hosCirugia.get().setFechaEliminacion(LocalDateTime.now());
+        return  mapeadorCirugia.toCirugia(repositorio.save(hosCirugia.get()));
     }
 
 }

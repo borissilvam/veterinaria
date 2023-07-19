@@ -1,5 +1,6 @@
 package com.viamatica.veterinaria.dominio.servicio;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.viamatica.veterinaria.dominio.HospitalizacionPaciente;
 import com.viamatica.veterinaria.persistencia.crud.HosHospitalizacionPacienteRepositorio;
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
 import com.viamatica.veterinaria.persistencia.entidades.HosHospitalizacionPaciente;
 import com.viamatica.veterinaria.persistencia.mapeadores.MapeadorHospitalizacionPaciente;
 
@@ -38,9 +40,9 @@ public class HosHospitalizacionPacienteServicio {
             ).toList());
     }
 
-    public List<HospitalizacionPaciente> obtenerPorIdPaciente(Integer idPaciente)
+    public List<HospitalizacionPaciente> obtenerPorIdPaciente(GesPaciente idPaciente)
     {
-        return mapeador.toHospitalizacionPacientes( repositorio.findByIdPaciente(idPaciente));
+        return mapeador.toHospitalizacionPacientes( repositorio.findByPaciente(idPaciente));
     }
 
     public List<HospitalizacionPaciente> obtenerPorFechaIngreso(Date fechaIngreso)
@@ -82,13 +84,20 @@ public class HosHospitalizacionPacienteServicio {
     public HospitalizacionPaciente borrar(Integer idHospitalizacionPaciente)
     {
         Optional<HosHospitalizacionPaciente> hosHospitalizacionPaciente = repositorio.findById(idHospitalizacionPaciente);
-        if(hosHospitalizacionPaciente.get() == null)
+        if(!hosHospitalizacionPaciente.isPresent())
             return null;
 
         hosHospitalizacionPaciente.get().setEstadoHosPaciente("I");
-        hosHospitalizacionPaciente.get().setFechaEliminacion(new Date());
+        hosHospitalizacionPaciente.get().setFechaEliminacion(LocalDateTime.now());
         return  mapeador.toHospitalizacionPaciente(repositorio.save(hosHospitalizacionPaciente.get()));
     }
 
+
+    public boolean pacienteSigueHospitalizado(Integer idPaciente)
+    {
+        return repositorio.hasNullFechaSalidaByIdPaciente(idPaciente)==1 ? true : false;
+    }
+
+    
 
 }

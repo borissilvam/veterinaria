@@ -16,9 +16,9 @@ public interface MapeadorCirugia {
     @Mappings({
         @Mapping(source = "idHosCirguia", target = "idHosCirugia"),
         @Mapping(source = "idPaciente", target = "idPaciente"),
-        @Mapping(source = "idHosTipoCirugia", target = "idHosTipoCirugia"),
+        @Mapping(source = "tipoCirugia", target = "tipoCirugia"),
         @Mapping(source = "fechaProgramada", target = "fechaProgramada"),
-        @Mapping(source = "idDoctor", target = "idDoctor"),
+        @Mapping(source = "doctor", target = "doctor"),
         @Mapping(source = "estadoCirugia", target = "estadoCirugia")
     })
     Cirugia toCirugia(HosCirugia hosCirugia);

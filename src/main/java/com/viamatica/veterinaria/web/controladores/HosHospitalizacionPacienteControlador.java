@@ -1,5 +1,6 @@
 package com.viamatica.veterinaria.web.controladores;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,10 +74,19 @@ class HosHospitalizacionPacienteControlador {
 
 
     @PostMapping
-    public ResponseEntity<HospitalizacionPaciente> crear(@RequestBody HospitalizacionPaciente HospitalizacionPaciente)
+    public ResponseEntity<HospitalizacionPaciente> crear(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
     {
         try{
-            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.guardar(HospitalizacionPaciente);
+            hospitalizacionPaciente.setIdHospitalizacion(null);
+            if(servicio.pacienteSigueHospitalizado(hospitalizacionPaciente.getPaciente().getIdPaciente()))
+            {
+                return new ResponseEntity("Paciente ya está hospitalizado", HttpStatus.EXPECTATION_FAILED);
+            }
+            if(hospitalizacionPaciente.getFechaSalida().isBefore(LocalDateTime.now()) )
+            {
+                return new ResponseEntity("La fecha de salida es anterior a la de entrada ", HttpStatus.EXPECTATION_FAILED);
+            }
+            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.guardar(hospitalizacionPaciente);
             return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.CREATED);
         }catch(Exception e)
         {
@@ -85,10 +95,14 @@ class HosHospitalizacionPacienteControlador {
     }
 
     @PutMapping
-    public ResponseEntity<HospitalizacionPaciente> actualizar(@RequestBody HospitalizacionPaciente HospitalizacionPaciente)
+    public ResponseEntity<HospitalizacionPaciente> actualizar(@RequestBody HospitalizacionPaciente hospitalizacionPaciente)
     {
         try {
-            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.actualizar(HospitalizacionPaciente);
+            if(hospitalizacionPaciente.getFechaSalida()!=null && hospitalizacionPaciente.getFechaSalida().isBefore(hospitalizacionPaciente.getFechaIngreso()) )
+            {
+                return new ResponseEntity("La fecha de salida es anterior a la de entrada ", HttpStatus.EXPECTATION_FAILED);
+            }
+            HospitalizacionPaciente HospitalizacionPacienteSalvado = servicio.actualizar(hospitalizacionPaciente);
             return new ResponseEntity<HospitalizacionPaciente>(HospitalizacionPacienteSalvado, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -99,8 +113,12 @@ class HosHospitalizacionPacienteControlador {
     public ResponseEntity<HospitalizacionPaciente> borrar(@PathVariable("id") Integer id)
     {
         try {
-            HospitalizacionPaciente HospitalizacionPacienteBorrado = servicio.borrar(id);
-            return new ResponseEntity<>(HospitalizacionPacienteBorrado ,HttpStatus.NO_CONTENT);
+            HospitalizacionPaciente hospitalizacion = servicio.borrar(id);
+            if(hospitalizacion == null)
+            {
+                return new ResponseEntity("No existe el registro con el siguiente id: " + id, HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(hospitalizacion ,HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }

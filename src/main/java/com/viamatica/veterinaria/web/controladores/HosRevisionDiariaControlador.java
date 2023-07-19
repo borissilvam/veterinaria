@@ -72,10 +72,10 @@ class HosRevisionDiariaControlador {
 
 
     @PostMapping
-    public ResponseEntity<RevisionDiaria> crear(@RequestBody RevisionDiaria RevisionDiaria)
+    public ResponseEntity<RevisionDiaria> crear(@RequestBody RevisionDiaria revisionDiaria)
     {
         try{
-            RevisionDiaria RevisionDiariaSalvado = servicio.guardar(RevisionDiaria);
+            RevisionDiaria RevisionDiariaSalvado = servicio.guardar(revisionDiaria);
             return new ResponseEntity<RevisionDiaria>(RevisionDiariaSalvado, HttpStatus.CREATED);
         }catch(Exception e)
         {

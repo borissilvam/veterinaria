@@ -1,9 +1,10 @@
 package com.viamatica.veterinaria.persistencia.entidades;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,31 +21,34 @@ public class HosCirugia {
     @Column(name = "idPaciente")
     private Integer idPaciente;
 
-    @Column(name = "idHostipoCirugia")
-    private Integer idHosTipoCirugia;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idHostipoCirugia")
+    private HosTipoCirugia tipoCirugia;
 
     @Column(name = "fechaProgramada")
-    private Date fechaProgramada;
+    private LocalDateTime fechaProgramada;
 
-    @Column(name = "idDoctor")
-    private Integer idDoctor;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idDoctor")
+    private HisDoctor doctor;
 
     @Column(name = "estadoCirugia")
     private String estadoCirugia;
 
-    @Column(name = "fechaCreacion")
+    @Column(name = "fechaCreacion", updatable = false)
     @CreationTimestamp
-    private Date fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fechaActualizacion")
     @UpdateTimestamp
-    private Date fechaActualizacion;
+    private LocalDateTime fechaActualizacion;
 
     @Column(name ="fechaEliminacion")
-    private Date fechaEliminacion;
+    private LocalDateTime fechaEliminacion;
     
-    public HosCirugia() {
-        this.fechaCreacion = new Date();
-    }
+    // public HosCirugia() {
+    //     this.fechaCreacion = new LocalDate
+    // }
+
     
 }

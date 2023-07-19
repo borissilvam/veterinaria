@@ -1,7 +1,9 @@
 package com.viamatica.veterinaria.dominio;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
 
 import lombok.Data;
 
@@ -9,11 +11,11 @@ import lombok.Data;
 public class HospitalizacionPaciente {
     private Integer idHospitalizacion;
 
-    private Integer idPaciente;
+    private GesPaciente paciente;
 
-    private Date fechaIngreso;
+    private LocalDateTime fechaIngreso;
 
-    private Date fechaSalida;
+    private LocalDateTime fechaSalida;
 
     private String motivo;
 

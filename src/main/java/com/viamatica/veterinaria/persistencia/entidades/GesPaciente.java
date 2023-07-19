@@ -7,42 +7,48 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name= "HosTipoCirugia", schema="dbo")
 @Data
-public class HosTipoCirugia {
-
-    // public HosTipoCirugia() {
-    //     this.fechaCreacion = new Date();
-    // }
-
+@Table(name =  "GesPaciente")
+public class GesPaciente {
+ 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idHosTipoCirugia;
+    Integer idPaciente;
 
-    @Column(name ="tipoCirugia")
-    private String tipoCirugia;
+    String nombrePaciente;
 
-    @Column(name ="estadoTipoCirugia")
-    private String estadoTipoCirugia;
+    LocalDateTime fechaNac;
 
-    @Column(name ="fechaCreacion", updatable = false)
+    Integer edad;
+
+    String raza;
+
+    String idTipoPaciente;
+
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idCliente")
+    GesCliente idCliente;
+
+    String estadoPaciente;
+
+    @Column(name = "fechaCreacion")
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
-    
-    // @CreationTimestamp
-    @Column(name ="fechaActualizacion")
+
+    @Column(name = "fechaActualizacion")
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
 
-    @Column(name ="fechaEliminacion")
+     @Column(name ="fechaEliminacion")
     private LocalDateTime fechaEliminacion;
-
-    
     
 }

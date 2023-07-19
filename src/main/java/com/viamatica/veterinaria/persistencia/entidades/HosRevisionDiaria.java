@@ -1,6 +1,7 @@
 
 package com.viamatica.veterinaria.persistencia.entidades;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,9 +9,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -29,25 +33,26 @@ public class HosRevisionDiaria
     @Column(name = "fechaRevision")
     private Date fechaRevision;
 
-    @Column(name = "idPaciente")
-    private Integer idPaciente;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idPaciente")
+    private GesPaciente paciente;
 
     @Column(name = "estadoHosRevisiondiaria")
     private String estadoHosRevisiondiaria;
     
-    @Column(name = "fechaCreacion")
+    @Column(name = "fechaCreacion", updatable = false)
     @CreationTimestamp
-    private Date fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fechaActualizacion")
     @UpdateTimestamp
-    private Date fechaActualizacion;
+    private LocalDateTime fechaActualizacion;
 
      @Column(name ="fechaEliminacion")
-    private Date fechaEliminacion;
+    private LocalDateTime fechaEliminacion;
     
-    public HosRevisionDiaria() {
-        this.fechaCreacion = new Date();
-    }
+    // public HosRevisionDiaria() {
+    //     this.fechaCreacion = new Date();
+    // }
     
 }

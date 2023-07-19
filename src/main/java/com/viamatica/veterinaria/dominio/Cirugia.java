@@ -1,7 +1,9 @@
 
 package com.viamatica.veterinaria.dominio;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.viamatica.veterinaria.persistencia.entidades.HisDoctor;
 
 import lombok.Data;
 
@@ -12,11 +14,11 @@ public class Cirugia  {
     
     private Integer idPaciente;
 
-    private Integer idHosTipoCirugia;
+    private TipoCirugia tipoCirugia;
 
-    private Date fechaProgramada;
+    private LocalDateTime fechaProgramada;
 
-    private Integer idDoctor;
+    private HisDoctor doctor;
 
     private String estadoCirugia;
     

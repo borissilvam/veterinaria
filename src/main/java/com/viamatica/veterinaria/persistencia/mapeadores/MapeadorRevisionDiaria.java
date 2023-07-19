@@ -16,7 +16,7 @@ public interface MapeadorRevisionDiaria {
     @Mappings({
         @Mapping(source = "idRevisionDiaria", target = "idRevisionDiaria"),
         @Mapping(source = "fechaRevision", target = "fechaRevision"),
-        @Mapping(source = "idPaciente", target = "idPaciente"),
+        @Mapping(source = "paciente", target = "paciente"),
         @Mapping(source = "detalle", target = "detalle"),
         @Mapping(source = "estadoHosRevisiondiaria", target = "estadoHosRevisiondiaria")
     })

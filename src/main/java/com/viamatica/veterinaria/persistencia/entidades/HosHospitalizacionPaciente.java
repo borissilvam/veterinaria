@@ -1,16 +1,19 @@
 package com.viamatica.veterinaria.persistencia.entidades;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -22,14 +25,15 @@ public class HosHospitalizacionPaciente {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idHospitalizacion;
 
-    @Column(name = "idPaciente")
-    private Integer idPaciente;
+    @OneToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "idPaciente")
+    private GesPaciente paciente;
 
     @Column(name = "fechaIngreso")
-    private Date fechaIngreso;
+    private LocalDateTime fechaIngreso;
 
     @Column(name = "fechaSalida")
-    private Date fechaSalida;
+    private LocalDateTime fechaSalida;
 
     @Column(name = "motivo")
     private String motivo;
@@ -37,18 +41,15 @@ public class HosHospitalizacionPaciente {
     @Column(name = "estadoHosPaciente")
     private String estadoHosPaciente;
 
-    @Column(name = "fechaCreacion")
+    @Column(name = "fechaCreacion", updatable = false)
     @CreationTimestamp
-    private Date fechaCreacion;
+    private LocalDateTime fechaCreacion;
 
     @Column(name = "fechaActualizacion")
     @UpdateTimestamp
-    private Date fechaActualizacion;
+    private LocalDateTime fechaActualizacion;
 
      @Column(name ="fechaEliminacion")
-    private Date fechaEliminacion;
+    private LocalDateTime fechaEliminacion;
     
-    public HosHospitalizacionPaciente() {
-        this.fechaCreacion = new Date();
-    }
 }

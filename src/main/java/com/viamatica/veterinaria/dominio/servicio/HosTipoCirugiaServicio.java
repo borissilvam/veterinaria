@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.viamatica.veterinaria.dominio.TipoCirugia;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +47,7 @@ public class HosTipoCirugiaServicio {
 
     public TipoCirugia guardar(TipoCirugia tipoCirugia)
     {
+        tipoCirugia.setIdHosTipoCirugia(null);
         HosTipoCirugia hosTipoCirugia = repositorio.save(mapeador.toHosTipoCirugia(tipoCirugia));
         return mapeador.toTipoCirugia(hosTipoCirugia);
     }
@@ -70,7 +71,7 @@ public class HosTipoCirugiaServicio {
             return null;
 
         hosTipoCirugia.get().setEstadoTipoCirugia("I");
-        hosTipoCirugia.get().setFechaEliminacion(new Date());
+        hosTipoCirugia.get().setFechaEliminacion(LocalDateTime.now());
         return  mapeador.toTipoCirugia(repositorio.save(hosTipoCirugia.get()));
     }
 

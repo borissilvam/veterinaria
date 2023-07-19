@@ -15,7 +15,7 @@ public interface MapeadorHospitalizacionPaciente {
     
     @Mappings({
         @Mapping(source = "idHospitalizacion", target = "idHospitalizacion"),
-        @Mapping(source = "idPaciente", target = "idPaciente"),
+        @Mapping(source = "paciente", target = "paciente"),
         @Mapping(source = "fechaIngreso", target = "fechaIngreso"),
         @Mapping(source = "fechaSalida", target = "fechaSalida"),
         @Mapping(source = "motivo", target = "motivo"),

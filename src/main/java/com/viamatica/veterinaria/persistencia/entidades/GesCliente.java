@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,35 +15,41 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name= "HosTipoCirugia", schema="dbo")
 @Data
-public class HosTipoCirugia {
-
-    // public HosTipoCirugia() {
-    //     this.fechaCreacion = new Date();
-    // }
-
+@Table(name =  "GesCliente")
+public class GesCliente {
+    
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idHosTipoCirugia;
+    Integer idCliente;
 
-    @Column(name ="tipoCirugia")
-    private String tipoCirugia;
+    String numDocumento;
 
-    @Column(name ="estadoTipoCirugia")
-    private String estadoTipoCirugia;
+    String nombreCliente;
 
-    @Column(name ="fechaCreacion", updatable = false)
+    String apellidoCliente;
+
+    LocalDateTime fechaNac;
+
+    String telefono;
+
+    String direccion;
+
+    String correo;
+
+    String estadoCliente;
+
+    Integer idUsuario;
+
+
+    @Column(name = "fechaCreacion")
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
-    
-    // @CreationTimestamp
-    @Column(name ="fechaActualizacion")
+
+    @Column(name = "fechaActualizacion")
     @UpdateTimestamp
     private LocalDateTime fechaActualizacion;
 
-    @Column(name ="fechaEliminacion")
+     @Column(name ="fechaEliminacion")
     private LocalDateTime fechaEliminacion;
 
-    
-    
 }

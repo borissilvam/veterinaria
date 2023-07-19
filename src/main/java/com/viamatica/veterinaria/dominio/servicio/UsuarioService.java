@@ -3,7 +3,6 @@ package com.viamatica.veterinaria.dominio.servicio;
 import com.viamatica.veterinaria.dominio.Usuario;
 import com.viamatica.veterinaria.persistencia.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

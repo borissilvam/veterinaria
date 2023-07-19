@@ -1,6 +1,6 @@
 package com.viamatica.veterinaria.dominio.servicio;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.viamatica.veterinaria.dominio.RevisionDiaria;
 import com.viamatica.veterinaria.persistencia.crud.HosRevisionDiariaRepositorio;
+import com.viamatica.veterinaria.persistencia.entidades.GesPaciente;
 import com.viamatica.veterinaria.persistencia.entidades.HosRevisionDiaria;
 import com.viamatica.veterinaria.persistencia.mapeadores.MapeadorRevisionDiaria;
 
@@ -34,9 +35,13 @@ public class HosRevisionDiariaServicio {
             ).toList());
     }
 
-    public List<RevisionDiaria> obtenerPorIdPaciente(Integer idHospitalizacion)
+    public List<RevisionDiaria> obtenerPorIdPaciente(Integer idPaciente)
     {
-        return mapeador.toRevisionDiarias( repositorio.findByIdPaciente(idHospitalizacion));
+        return mapeador.toRevisionDiarias( repositorio.findByPaciente(
+            new GesPaciente(){ 
+                {setIdPaciente( idPaciente);}
+            }
+        ));
     }
 
     public List<RevisionDiaria> obtenerTodosIncluidoInactivos()
@@ -44,16 +49,18 @@ public class HosRevisionDiariaServicio {
         return mapeador.toRevisionDiarias( repositorio.findAll());
     }
 
-    public RevisionDiaria guardar(RevisionDiaria RevisionDiaria)
+    public RevisionDiaria guardar(RevisionDiaria revisionDiaria)
     {
-        HosRevisionDiaria hosRevisionDiaria = repositorio.save(mapeador.toHosRevisionDiaria(RevisionDiaria));
+        
+        revisionDiaria.setIdRevisionDiaria(null);
+        HosRevisionDiaria hosRevisionDiaria = repositorio.save(mapeador.toHosRevisionDiaria(revisionDiaria));
         return mapeador.toRevisionDiaria(hosRevisionDiaria);
     }
 
     public RevisionDiaria actualizar(RevisionDiaria RevisionDiaria)
     {   
         Optional<HosRevisionDiaria> hosRevisionDiaria = repositorio.findById(RevisionDiaria.getIdRevisionDiaria());
-        if(hosRevisionDiaria.get() == null)
+        if(!hosRevisionDiaria.isPresent())
             return null;
         
         hosRevisionDiaria.get().setDetalle(RevisionDiaria.getDetalle());
@@ -65,11 +72,11 @@ public class HosRevisionDiariaServicio {
     public RevisionDiaria borrar(Integer idRevisionDiaria)
     {
         Optional<HosRevisionDiaria> hosRevisionDiaria = repositorio.findById(idRevisionDiaria);
-        if(hosRevisionDiaria.get() == null)
+        if(!hosRevisionDiaria.isPresent())
             return null;
 
         hosRevisionDiaria.get().setEstadoHosRevisiondiaria("I");
-        hosRevisionDiaria.get().setFechaEliminacion(new Date());
+        hosRevisionDiaria.get().setFechaEliminacion(LocalDateTime.now());
         return  mapeador.toRevisionDiaria(repositorio.save(hosRevisionDiaria.get()));
     }
 
