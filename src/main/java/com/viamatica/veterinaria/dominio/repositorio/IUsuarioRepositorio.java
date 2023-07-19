@@ -12,6 +12,8 @@ public interface IUsuarioRepositorio {
 
     Optional<Usuario> obtenerUsuarioPorNombre(String nombreUsuario);
 
+    Optional<Usuario> obtenerUsuarioPorCorreo(String correo);
+
     Optional<List<Usuario>> obtenerUsuariosPorPerfil(int idPerfil);
 
     Usuario actualizar(Usuario usuario);

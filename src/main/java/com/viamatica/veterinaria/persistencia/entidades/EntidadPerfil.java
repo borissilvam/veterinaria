@@ -15,7 +15,7 @@ public class EntidadPerfil {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPerfil;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private  String nombrePerfil;
     @Column(nullable = false, length = 2)
     private String estadoPerfil;
