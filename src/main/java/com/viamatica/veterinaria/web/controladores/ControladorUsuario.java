@@ -1,7 +1,9 @@
 package com.viamatica.veterinaria.web.controladores;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.viamatica.veterinaria.dominio.Usuario;
 import com.viamatica.veterinaria.dominio.servicio.UsuarioService;
+import com.viamatica.veterinaria.web.error.ApiError;
 import com.viamatica.veterinaria.web.error.UsuarioNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +47,10 @@ public class ControladorUsuario {
             );
         }
 
+       /* return usuarioService.obtenerUsuario(idUsuario)
+                .map(usuario -> new ResponseEntity<>(usuario, HttpStatus.OK))
+                .orElseThrow(()-> new UsuarioNotFoundException(idUsuario));*/
+
     }
 
     @GetMapping("nombre/{nombre}")
@@ -71,12 +78,12 @@ public class ControladorUsuario {
 
                 mensaje = "El nombre de usuario ya esta en uso por otro usuario";
 
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+               throw new ResponseStatusException(HttpStatus.CONFLICT,mensaje);
 
 
             }else if (usuarioService.obtenerUsuarioPorCorreo(usuario.getCorreo()).isPresent()) {
                 mensaje= "El correo ya esta en uso por otro usuario";
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+                throw new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
             } else  {
                 return new ResponseEntity<>(usuarioService.guardar(usuario), HttpStatus.CREATED) ;
             }
@@ -107,13 +114,13 @@ public class ControladorUsuario {
     }
 
     @PutMapping("/desbloquear/{id}")
-    public ResponseEntity desbloquear(@PathVariable("id") int idUsuario){
+    public ResponseEntity<Void> desbloquear(@PathVariable("id") int idUsuario){
         try {
             if (usuarioService.obtenerUsuario(idUsuario).isEmpty()){
                 throw new UsuarioNotFoundException(idUsuario);
             }else {
                 usuarioService.desbloquear(idUsuario);
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
         }catch (UsuarioNotFoundException ex){
             throw new ResponseStatusException(
@@ -125,19 +132,21 @@ public class ControladorUsuario {
     }
 
     @DeleteMapping("eliminar/{id}")
-    public ResponseEntity eliminar(@PathVariable("id") int idUsuario){
+    public ResponseEntity<Void> eliminar(@PathVariable("id") int idUsuario){
 
         try {
             if (usuarioService.obtenerUsuario(idUsuario).isEmpty()){
                 throw new UsuarioNotFoundException(idUsuario);
             }else {
                 usuarioService.eliminar(idUsuario);
-                return new ResponseEntity(HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
         }catch (UsuarioNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage()
             );
+
+
         }
 
     }

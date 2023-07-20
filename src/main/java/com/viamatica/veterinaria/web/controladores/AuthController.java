@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    @Autowired
+    /*@Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtil jwtUtil;
@@ -34,5 +34,5 @@ public class AuthController {
         String jwt = jwtUtil.create(loginDto.getUsername());
 
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwt).build();
-    }
+    }*/
 }

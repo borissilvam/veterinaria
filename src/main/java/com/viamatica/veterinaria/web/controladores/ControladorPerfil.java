@@ -74,7 +74,7 @@ public class ControladorPerfil {
             if (perfilService.obtenerPerfilPorNombre(perfil.getNombrePerfil()).isPresent()){
                 String mensaje = "El Perfil ya existe";
 
-                return new ResponseEntity<>(mensaje, HttpStatus.CONFLICT);
+                throw  new ResponseStatusException(HttpStatus.CONFLICT, mensaje);
             }else {
                 return new ResponseEntity<>(perfilService.guardar(perfil), HttpStatus.CREATED) ;
             }
@@ -108,12 +108,12 @@ public class ControladorPerfil {
     public ResponseEntity eliminar(@PathVariable("id") int idPerfil){
         try {
             if (perfilService.obtenerPerfil(idPerfil).isEmpty()){
-                throw new UsuarioNotFoundException(idPerfil);
+                throw new PerfilNotFoundException(idPerfil);
             }else {
                 perfilService.eliminar(idPerfil);
                 return new ResponseEntity(HttpStatus.OK);
             }
-        }catch (UsuarioNotFoundException ex){
+        }catch (PerfilNotFoundException ex){
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, ex.getMessage()
             );
