@@ -25,7 +25,7 @@ public class UsuarioSecurityService implements UserDetailsService {
         EntidadUsuario entidadUsuario = entidadUsuarioCrudRepositorio.findByNombreUsuario(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + "not found"));
 
-        System.out.println(entidadUsuario);
+        //System.out.println(entidadUsuario);
 
    //     String[] roles = entidadUsuario.getUsuarioPerfils()
      //           .stream().map(entidadUsuarioPerfil -> {
@@ -44,7 +44,7 @@ public class UsuarioSecurityService implements UserDetailsService {
         List<String> roles = entidadUsuario.getUsuarioPerfils()
                 .stream()
                 .map(entidadUsuarioPerfil -> entidadUsuarioPerfil.getEntidadPerfil().getNombrePerfil())
-                .collect(Collectors.toList());
+                .toList();
 
         return User.builder()
                 .username(entidadUsuario.getNombreUsuario())

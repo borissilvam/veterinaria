@@ -28,8 +28,8 @@ public class AuthController {
                 loginDto.getPassword());
         Authentication authentication = authenticationManager.authenticate(login);
 
-        System.out.println(authentication.isAuthenticated());
-        System.out.println(authentication.getPrincipal());
+        System.out.println("Bollean : " + authentication.isAuthenticated());
+        System.out.println("Principal : " + authentication.getPrincipal());
 
         String jwt = jwtUtil.create(loginDto.getUsername());
 
