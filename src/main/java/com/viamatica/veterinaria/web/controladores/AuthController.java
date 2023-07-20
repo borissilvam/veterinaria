@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    /*@Autowired
+    @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtil jwtUtil;
@@ -28,11 +28,11 @@ public class AuthController {
                 loginDto.getPassword());
         Authentication authentication = authenticationManager.authenticate(login);
 
-        System.out.println(authentication.isAuthenticated());
-        System.out.println(authentication.getPrincipal());
+        System.out.println("Bollean : " + authentication.isAuthenticated());
+        System.out.println("Principal : " + authentication.getPrincipal());
 
         String jwt = jwtUtil.create(loginDto.getUsername());
 
         return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, jwt).build();
-    }*/
+    }
 }
