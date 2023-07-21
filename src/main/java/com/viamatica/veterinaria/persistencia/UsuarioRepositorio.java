@@ -47,6 +47,13 @@ public class UsuarioRepositorio implements IUsuarioRepositorio {
     }
 
     @Override
+    public Optional<Usuario> obtenerUsuarioPorCorreo(String correo) {
+        Optional<EntidadUsuario> usuario = entidadUsuarioCrudRepositorio.findByCorreo(correo);
+
+        return usuario.map(mapeador::toUsuario);
+    }
+
+    @Override
     public Optional<List<Usuario>> obtenerUsuariosPorPerfil(int idPerfil) {
         return Optional.empty();
     }

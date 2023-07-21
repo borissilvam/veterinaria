@@ -35,4 +35,18 @@ public class EntidadUsuario {
     @OneToMany(mappedBy = "entidadUsuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<EntidadUsuarioPerfil> usuarioPerfils;
 
+    @Override
+    public String toString() {
+        return "EntidadUsuario{" +
+                "idUsuario=" + idUsuario +
+                ", nombreUsuario='" + nombreUsuario + '\'' +
+                ", contrasenia='" + contrasenia + '\'' +
+                ", correo='" + correo + '\'' +
+                ", bloqueado=" + bloqueado +
+                ", estadoUsuario='" + estadoUsuario + '\'' +
+                ", fechaCreacion=" + fechaCreacion +
+                ", fechaActualizacion=" + fechaActualizacion +
+                ", usuarioPerfils=" + usuarioPerfils +
+                '}';
+    }
 }
