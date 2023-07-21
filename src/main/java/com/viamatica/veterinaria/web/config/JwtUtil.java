@@ -15,6 +15,7 @@ public class JwtUtil {
     private static Algorithm ALGORITHM = Algorithm.HMAC256(SECRET_KEY);
 
     public String create(String username){
+        
         return JWT.create()
                 .withSubject(username)
                 .withIssuer("viamatica")

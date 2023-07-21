@@ -22,6 +22,8 @@ import com.viamatica.veterinaria.dominio.servicio.HosCirugiaServicio;
 import com.viamatica.veterinaria.dominio.servicio.HosTipoCirugiaServicio;
 import com.viamatica.veterinaria.web.RespuestaServidor;
 
+import jakarta.annotation.security.RolesAllowed;
+
 
 
 @RestController

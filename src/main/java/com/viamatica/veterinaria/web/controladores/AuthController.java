@@ -30,6 +30,7 @@ public class AuthController {
 
         System.out.println("Bollean : " + authentication.isAuthenticated());
         System.out.println("Principal : " + authentication.getPrincipal());
+        System.out.println("ROLES: " + authentication.getAuthorities());
 
         String jwt = jwtUtil.create(loginDto.getUsername());
 

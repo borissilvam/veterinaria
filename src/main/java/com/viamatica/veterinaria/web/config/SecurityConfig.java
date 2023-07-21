@@ -39,12 +39,14 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.GET, "/usuario/**").hasAnyRole("ADMIN", "AUDITOR")
                             .requestMatchers(HttpMethod.POST, "/usuario/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.PUT, "/usuario/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.DELETE,"/usuario/**").hasRole("ADMIN")
-                            .requestMatchers("/HosHospitalizacionPaciente").hasRole("ADMIN")
-                            .requestMatchers("/HosCirugia").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE,"/usuario/**").hasRole("ADMIN")                            
+                            // .requestMatchers("/HosHospitalizacionPaciente/**").hasRole("ADMIN")
+                            // .requestMatchers("/HosCirugia").hasAnyAuthority("ADMIN")
+                            .requestMatchers("/HosHospitalizacionPaciente/**").permitAll()
+                            .requestMatchers("/HosCirugia/**").permitAll()
                             .anyRequest()
                             .authenticated();
-
+;
 
                 })
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

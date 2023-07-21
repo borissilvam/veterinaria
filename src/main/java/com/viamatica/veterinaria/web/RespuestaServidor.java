@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 public class RespuestaServidor {
     private HttpStatus status;
+    private int statusCode;
     private List<String> mensajes;
 
     public RespuestaServidor()
@@ -21,11 +22,13 @@ public class RespuestaServidor {
     public RespuestaServidor(HttpStatus status)
     {
         this.status = status;
+        statusCode = status.value();
         mensajes = new ArrayList<>();
     }
     public RespuestaServidor(HttpStatus status, String mensaje)
     {
         this.status = status;
+        statusCode = status.value();
         mensajes = new ArrayList<>();
         mensajes.add(mensaje);
     }

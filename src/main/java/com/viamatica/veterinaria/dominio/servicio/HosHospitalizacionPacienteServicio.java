@@ -30,7 +30,7 @@ public class HosHospitalizacionPacienteServicio {
     public HospitalizacionPaciente obtenerPorId(Integer id)
     {
         Optional<HosHospitalizacionPaciente> hosHospitalizacionPaciente = repositorio.findById(id);
-        return mapeador.toHospitalizacionPaciente( hosHospitalizacionPaciente.get());
+        return mapeador.toHospitalizacionPaciente( hosHospitalizacionPaciente.isPresent() ? hosHospitalizacionPaciente.get() : null);
     }
 
     public List<HospitalizacionPaciente> obtenerTodos()
